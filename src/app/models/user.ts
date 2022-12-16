@@ -27,7 +27,7 @@ export class User {
     return this._id;
   }
 
-  public getUser() {
+  public toJson() {
     return {
       id: this._id,
       name: this._name,

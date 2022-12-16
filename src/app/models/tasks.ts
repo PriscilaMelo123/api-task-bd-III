@@ -7,7 +7,7 @@ export class Tasks {
   constructor(
     private _description: string,
     private _detail: string,
-    private _user?: User,
+    private _user: User,
     private _arquivada?: boolean
   ) {
     this._id = createUuid();
@@ -47,10 +47,9 @@ export class Tasks {
     id: string,
     description: string,
     detail: string,
-    user?: User,
-    arquivada?: boolean
+    user: User
   ) {
-    const tasks = new Tasks(description, detail, user, arquivada);
+    const tasks = new Tasks(description, detail, user);
     tasks._id = id;
 
     return tasks;

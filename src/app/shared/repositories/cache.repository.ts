@@ -1,19 +1,23 @@
 import { CacheConnection } from "../../../main/database/cache.connection";
 
 export class CacheRepository {
-    private repostory = CacheConnection.connection;
+  private repository = CacheConnection.connection;
 
-    public async get(chave: string){
-        const result = await this.repostory.get(chave);
+  public async get(chave: string) {
+    const result = await this.repository.get(chave);
 
-        if(!result){
-            return null;
-        }
-
-        return JSON.parse(result);
+    if (!result) {
+      return null;
     }
 
-    public async set(chave: string, data: any){
-        await this.repostory.set(chave, JSON.stringify(data));
-    }
+    return JSON.parse(result);
+  }
+
+  public async set(chave: string, data: any) {
+    await this.repository.set(chave, JSON.stringify(data));
+  }
+
+  public async delete(chave: string) {
+    await this.repository.del(chave);
+  }
 }

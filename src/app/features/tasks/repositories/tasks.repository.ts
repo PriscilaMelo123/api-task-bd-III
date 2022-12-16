@@ -7,7 +7,7 @@ interface UpdateTasksDTO {
   description?: string;
   detail?: string;
   arquivada?: boolean;
-  id_user?: string;
+  user?: User;
 }
 
 export class TasksRepository {
@@ -29,7 +29,7 @@ export class TasksRepository {
   }
 
   private mapEntityToModel(item: TasksEntity) {
-    let user = undefined;
+    let user!: User;
 
     if (item.user) {
       user = User.create(item.user.id, item.user.name, item.user.pass);
@@ -39,9 +39,15 @@ export class TasksRepository {
   }
 
   public async get(id: string) {
-    return await this._repository.findOneBy({
+    const result = await this._repository.findOneBy({
       id,
     });
+
+    if (!result) {
+      return null;
+    }
+
+    return this.mapEntityToModel(result);
   }
 
   public async create(tasks: Tasks) {
@@ -49,36 +55,38 @@ export class TasksRepository {
       id: tasks.id,
       description: tasks.description,
       detail: tasks.detail,
+      arquivada: tasks.arquivada,
       id_user: tasks.user?.id,
-      // arquivada: tasks.arquivada,
     });
 
-    return await this._repository.save(tasksEntity);
+    const result = await this._repository.save(tasksEntity);
+
+    return this.mapEntityToModel(result);
   }
 
-  public async update(tasksEntity: TasksEntity, data: UpdateTasksDTO) {
-    if (data.description) {
-      tasksEntity.description = data.description;
-    }
+  // public async update(tasksEntity: TasksEntity, data: UpdateTasksDTO) {
+  //   if (data.description) {
+  //     tasksEntity.description = data.description;
+  //   }
 
-    if (data.detail) {
-      tasksEntity.detail = data.detail;
-    }
+  //   if (data.detail) {
+  //     tasksEntity.detail = data.detail;
+  //   }
 
-    if (data.id_user) {
-      tasksEntity.id_user = data.id_user;
-    }
+  //   if (data.id_user) {
+  //     tasksEntity.id_user = data.id_user;
+  //   }
 
-    return await this._repository.save(tasksEntity);
-  }
+  //   return await this._repository.save(tasksEntity);
+  // }
 
-  public async arquivar(tasksEntity: TasksEntity, data: UpdateTasksDTO) {
-    if (data.arquivada) {
-      tasksEntity.arquivada = data.arquivada;
-    }
+  // public async arquivar(tasksEntity: TasksEntity, data: UpdateTasksDTO) {
+  //   if (data.arquivada) {
+  //     tasksEntity.arquivada = data.arquivada;
+  //   }
 
-    return await this._repository.save(tasksEntity);
-  }
+  //   return await this._repository.save(tasksEntity);
+  // }
 
   public async delete(id: string) {
     return await this._repository.delete({ id });
