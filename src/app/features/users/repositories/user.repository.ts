@@ -11,15 +11,25 @@ export class UserRepository {
   private _repository = DatabaseConnection.connection.getRepository(UserEntity);
 
   public async list() {
-    return await this._repository.find({
+    const result = await this._repository.find({
       relations: {
         tasks: true,
       },
     });
+
+    const users = result.map((item) => {
+      return this.mapEntityToModel(item);
+    });
+
+    return users;
+  }
+
+  private mapEntityToModel(item: UserEntity) {
+    return User.create(item.id, item.name, item.pass);
   }
 
   public async get(name: string) {
-    return await this._repository.findOne({
+    const result = await this._repository.findOne({
       where: {
         name,
       },
@@ -27,10 +37,16 @@ export class UserRepository {
         tasks: true,
       },
     });
+
+    if (!result) {
+      return null;
+    }
+
+    return this.mapEntityToModel(result);
   }
 
   public async getId(id: string) {
-    return await this._repository.findOne({
+    const result = await this._repository.findOne({
       where: {
         id,
       },
@@ -38,6 +54,12 @@ export class UserRepository {
         tasks: true,
       },
     });
+
+    if (!result) {
+      return null;
+    }
+
+    return this.mapEntityToModel(result);
   }
 
   public async create(user: User) {
@@ -46,8 +68,9 @@ export class UserRepository {
       name: user.name,
       pass: user.pass,
     });
+    const result = await this._repository.save(userEntity);
 
-    return await this._repository.save(userEntity);
+    return this.mapEntityToModel(result);
   }
 
   public async update(userEntity: UserEntity, data: UpdateUserDTO) {

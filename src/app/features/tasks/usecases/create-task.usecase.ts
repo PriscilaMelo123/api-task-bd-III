@@ -22,6 +22,7 @@ export class CreateTaskUseCase {
     const result = await this.repository.create(task);
     await this.cacheRepository.set(`task-${result.id}`, result);
     await this.cacheRepository.delete("tasks");
+    await this.cacheRepository.delete("user");
 
     return result.toJson();
   }

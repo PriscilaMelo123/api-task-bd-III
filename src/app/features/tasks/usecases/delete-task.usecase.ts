@@ -13,6 +13,7 @@ export class DeleteTaskUseCase {
     await this.repository.delete(id);
     await this.cacheRepository.delete(`task-${id}`);
     await this.cacheRepository.delete("tasks");
+    await this.cacheRepository.delete("user");
 
     return;
   }
