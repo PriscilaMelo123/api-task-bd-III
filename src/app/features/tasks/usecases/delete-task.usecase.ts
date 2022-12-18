@@ -12,6 +12,7 @@ export class DeleteTaskUseCase {
   public async execute(id: string) {
     await this.repository.delete(id);
     await this.cacheRepository.delete(`task-${id}`);
+    await this.cacheRepository.delete("tasks");
 
     return;
   }

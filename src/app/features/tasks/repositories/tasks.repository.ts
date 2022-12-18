@@ -64,21 +64,44 @@ export class TasksRepository {
     return this.mapEntityToModel(result);
   }
 
-  // public async update(tasksEntity: TasksEntity, data: UpdateTasksDTO) {
-  //   if (data.description) {
-  //     tasksEntity.description = data.description;
-  //   }
+  // public async update(task: Tasks) {
+  //   const result = await this._repository.update(
+  //     {
+  //       id: task.id,
+  //     },
+  //     {
+  //       description: task.description,
+  //       detail: task.detail,
+  //       arquivada: task.arquivada,
+  //     }
+  //   );
+  //   await this._repository.save({
+  //     id: task.id,
+  //     description: task.description,
+  //     detail: task.detail,
+  //     arquivada: task.arquivada,
+  //   });
 
-  //   if (data.detail) {
-  //     tasksEntity.detail = data.detail;
-  //   }
-
-  //   if (data.id_user) {
-  //     tasksEntity.id_user = data.id_user;
-  //   }
-
-  //   return await this._repository.save(tasksEntity);
+  //   return result.affected ?? 0;
   // }
+
+  public async update(data: UpdateTasksDTO) {
+    let tasksEntity!: TasksEntity;
+
+    if (data.description) {
+      tasksEntity.description = data.description;
+    }
+
+    if (data.detail) {
+      tasksEntity.detail = data.detail;
+    }
+
+    if (data.user?.id) {
+      tasksEntity.id_user = data.user.id;
+    }
+
+    return await this._repository.save(tasksEntity);
+  }
 
   // public async arquivar(tasksEntity: TasksEntity, data: UpdateTasksDTO) {
   //   if (data.arquivada) {

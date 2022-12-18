@@ -9,6 +9,7 @@ import { CreateTaskUseCase } from "../usecases/create-task.usecase";
 import { DeleteTaskUseCase } from "../usecases/delete-task.usecase";
 import { GetTasksUseCase } from "../usecases/get-tasks.usecase";
 import { ListTasksUseCase } from "../usecases/list-tasks.usecase";
+import { UpdateTaskUseCase } from "../usecases/update-task.usecase";
 
 export class TasksController {
   public async list(req: Request, res: Response) {
@@ -108,39 +109,58 @@ export class TasksController {
     }
   }
 
-  // public async update(req: Request, res: Response) {
-  //   try {
-  //     const { id } = req.params;
-  //     const { description, detail, arquivada } = req.body;
+  public async update(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      const { description, detail, arquivada } = req.body;
 
-  //     const repository = new TasksRepository();
-  //     const result = await repository.get(id);
+      const usecase = new UpdateTaskUseCase(
+        new TasksRepository(),
+        new CacheRepository()
+      );
 
-  //     if (!result) {
-  //       return res.status(404).send({
-  //         ok: false,
-  //         message: "Task não encontrada!",
-  //       });
-  //     }
+      // const repository = new TasksRepository();
+      // const result = await repository.get(id);
 
-  //     const resultUpdate = repository.update(result, {
-  //       description,
-  //       detail,
-  //       arquivada,
-  //     });
+      // if (!result) {
+      //   return res.status(404).send({
+      //     ok: false,
+      //     message: "Task não encontrada!",
+      //   });
+      // }
 
-  //     return res.status(200).send({
-  //       ok: true,
-  //       message: "Task atualizado com sucesso",
-  //       data: resultUpdate,
-  //     });
-  //   } catch (error: any) {
-  //     return res.status(500).send({
-  //       ok: false,
-  //       message: error.toString(),
-  //     });
-  //   }
-  // }
+      // const resultUpdate = repository.update(result, {
+      //   description,
+      //   detail,
+      //   arquivada,
+      // });
+
+      const resultUpdate = usecase.execute({
+        id,
+        description,
+        detail,
+        arquivada,
+      });
+
+      if (resultUpdate === null) {
+        return res.status(404).send({
+          ok: false,
+          message: "Growdever not found",
+        });
+      }
+
+      return res.status(200).send({
+        ok: true,
+        message: "Task atualizado com sucesso",
+        data: resultUpdate,
+      });
+    } catch (error: any) {
+      return res.status(500).send({
+        ok: false,
+        message: error.toString(),
+      });
+    }
+  }
 
   // public async arquivar(req: Request, res: Response) {
   //   try {
